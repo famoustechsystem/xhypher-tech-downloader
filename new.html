@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Xhypher Tech | Media Downloader</title>
+  <meta name="description" content="Download videos, images, and audio from your favorite social media platforms with Xhypher Tech. Fast, free, and easy-to-use media downloader." />
+  <meta name="author" content="Famous Tech" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="theme-color" content="#020510" />
+  <meta name="copyright" content="Xhypher Tech Media Downloader" />
+  <link rel="canonical" href="https://downloader.xhyphertech.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Xhypher Tech | Media Downloader" />
+  <meta property="og:title" content="Xhypher Tech | Media Downloader" />
+  <meta property="og:description" content="Download all videos and slideshows without watermark. Fast, free, HD." />
+  <meta property="og:url" content="https://downloader.xhyphertech.com/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:creator" content="@xhyphertech" />
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Xhypher Tech Media Downloader","url":"https://downloader.xhyphertech.com/","description":"Download all social media videos and slideshows without watermark. Free, fast, HD quality.","applicationCategory":"UtilitiesApplication","operatingSystem":"All","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is it free?","acceptedAnswer":{"@type":"Answer","text":"Yes, completely free. No signup required."}},{"@type":"Question","name":"Does it work on iPhone and Android?","acceptedAnswer":{"@type":"Answer","text":"Yes. Works on iPhone Safari, Android Chrome, and any modern browser."}}]}</script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <!-- Font Awesome 6 — brands + solid -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    /* ── THEME TOKENS ─────────────────────────────────────── */
+    :root {
+      --bg:      #020510;
+      --bg2:     #080d1f;
+      --card:    rgba(11,17,38,.96);
+      --border:  rgba(56,189,248,.18);
+      --accent:  #38bdf8;
+      --teal:    #2dd4bf;
+      --text:    #e0f2fe;
+      --text2:   #94a3b8;
+      --text3:   #64748b;
+      --success: #34d399;
+      --error:   #fb7185;
+      --radius:  12px;
+      --radius-lg: 22px;
+    }
+    [data-theme="light"] {
+      --bg:      #f0f9ff;
+      --bg2:     #e0f2fe;
+      --card:    rgba(255,255,255,.95);
+      --border:  rgba(14,165,233,.25);
+      --accent:  #0284c7;
+      --teal:    #0d9488;
+      --text:    #0f172a;
+      --text2:   #334155;
+      --text3:   #64748b;
+      --success: #059669;
+      --error:   #dc2626;
+    }
+
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+    html { scroll-behavior:smooth }
+    body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; transition:background .3s,color .3s }
+
+    canvas#bgCanvas { position:fixed; inset:0; z-index:0; opacity:.4; pointer-events:none }
+    .radial { position:fixed; border-radius:50%; z-index:0; filter:blur(100px); opacity:.18; pointer-events:none }
+    .r1 { width:700px; height:700px; background:#0ea5e9; top:-300px; left:-200px }
+    .r2 { width:500px; height:500px; background:#2dd4bf; bottom:-200px; right:-150px }
+
+    .wrapper { position:relative; z-index:1; padding-bottom:90px }
+
+    /* ── NAV ──────────────────────────────────────────────── */
+    nav { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; background:var(--card); border-bottom:1px solid var(--border); backdrop-filter:blur(20px); position:sticky; top:0; z-index:100 }
+    .logo { display:flex; align-items:center; gap:10px; font-size:16px; font-weight:800; color:var(--text); text-decoration:none }
+    .logo-icon { width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,var(--accent),var(--teal)); display:flex; align-items:center; justify-content:center; font-size:15px }
+    .logo span { color:var(--accent) }
+    .nav-right { display:flex; align-items:center; gap:8px }
+    .nav-tag { font-size:10px; font-weight:700; letter-spacing:1px; color:var(--accent); padding:3px 10px; border:1px solid var(--border); border-radius:20px; background:rgba(56,189,248,.08) }
+    .mode-toggle { background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text); width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; transition:.2s; backdrop-filter:blur(10px) }
+    .mode-toggle:hover { border-color:var(--accent); color:var(--accent) }
+
+    /* ── HERO ─────────────────────────────────────────────── */
+    .hero { text-align:center; padding:60px 20px 40px; max-width:600px; margin:0 auto }
+    .tiktok-badge { display:inline-flex; align-items:center; gap:8px; padding:5px 16px; border-radius:100px; background:rgba(56,189,248,.08); border:1px solid rgba(56,189,248,.4); font-size:12px; font-weight:600; color:var(--accent); margin-bottom:22px; box-shadow:0 0 16px rgba(56,189,248,.15) }
+    .tiktok-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--accent); animation:blink 2s ease infinite }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .hero h1 { font-size:clamp(26px,6vw,54px); font-weight:900; line-height:1.08; letter-spacing:-1.5px; margin-bottom:14px }
+    .hero h1 .grad { background:linear-gradient(135deg,var(--accent),var(--teal)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text }
+    .hero p { font-size:15px; color:var(--text2); line-height:1.7; margin-bottom:32px }
+
+    /* ── INPUT — pair.html style ──────────────────────────── */
+    .input-block { max-width:540px; margin:0 auto; display:flex; flex-direction:column; gap:10px }
+    .pair-input-row { display:flex; align-items:center; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:var(--radius); height:52px; transition:border-color .2s,box-shadow .2s; overflow:hidden }
+    .pair-input-row:focus-within { border-color:var(--accent); box-shadow:0 0 0 3px rgba(56,189,248,.15),0 0 20px rgba(56,189,248,.1) }
+    .pair-input-row input { flex:1; min-width:0; background:transparent; border:none; outline:none; color:var(--text); font-family:'Outfit',sans-serif; font-size:15px; padding:0 14px; height:100% }
+    .pair-input-row input::placeholder { color:var(--text3) }
+    .input-prefix { display:flex; align-items:center; justify-content:center; width:44px; height:100%; flex-shrink:0; color:var(--text3); font-size:13px; border-right:1px solid var(--border) }
+    .btn-download { width:100%; height:52px; background:linear-gradient(135deg,#0ea5e9,#2dd4bf); border:none; border-radius:var(--radius); color:#020510; font-family:'Outfit',sans-serif; font-size:15px; font-weight:700; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; gap:8px }
+    .btn-download:hover { transform:translateY(-1px); box-shadow:0 8px 28px rgba(56,189,248,.4) }
+    .btn-download:disabled { opacity:.5; cursor:not-allowed; transform:none; box-shadow:none }
+
+    /* ── PLATFORM BADGE ───────────────────────────────────── */
+    #platformBadge { display:none; align-items:center; gap:8px; justify-content:center; margin-top:4px; animation:rise .3s ease }
+    #platformBadge.show { display:flex }
+    .platform-pill { display:inline-flex; align-items:center; gap:7px; padding:4px 13px; border-radius:100px; font-size:12px; font-weight:700; border:1px solid; backdrop-filter:blur(8px) }
+    .platform-label { font-size:11px; color:var(--text3); font-weight:500 }
+
+    /* ── QUALITY ──────────────────────────────────────────── */
+    .quality-wrap { display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center }
+    .quality-label { font-size:11px; font-weight:700; color:var(--text3); letter-spacing:1px; text-transform:uppercase; flex-shrink:0 }
+    .quality-btns { display:flex; gap:6px; flex-wrap:wrap; justify-content:center }
+    .q-btn { padding:5px 13px; border-radius:100px; font-family:'Outfit',sans-serif; font-size:11px; font-weight:700; border:1px solid var(--border); background:rgba(56,189,248,.04); color:var(--text3); cursor:pointer; transition:all .2s }
+    .q-btn:hover { border-color:var(--accent); color:var(--text2) }
+    .q-btn.active { background:rgba(56,189,248,.12); border-color:var(--accent); color:var(--accent); box-shadow:0 0 10px rgba(56,189,248,.2) }
+
+    .hint { font-size:12px; color:var(--text3); margin-top:10px; text-align:center }
+    .features { display:flex; justify-content:center; gap:22px; flex-wrap:wrap; margin:26px auto 0; max-width:540px }
+    .feat { display:flex; align-items:center; gap:7px; font-size:13px; color:var(--text2); font-weight:500 }
+    .feat-dot { width:6px; height:6px; border-radius:50%; background:var(--teal); box-shadow:0 0 6px var(--teal) }
+
+    .section { max-width:640px; margin:0 auto; padding:20px 20px 48px }
+    .divider { height:1px; background:var(--border); margin:0 20px }
+
+    /* ── LOADER ───────────────────────────────────────────── */
+    #loader { display:none }
+    #loader.show { display:block }
+    .loader-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:36px; text-align:center; backdrop-filter:blur(20px); box-shadow:0 0 0 1px rgba(56,189,248,.3) }
+    .spinner { width:42px; height:42px; border:3px solid rgba(56,189,248,.1); border-top-color:var(--accent); border-right-color:var(--teal); border-radius:50%; margin:0 auto 16px; animation:spin .8s linear infinite; filter:drop-shadow(0 0 6px rgba(56,189,248,.4)) }
+    @keyframes spin { to { transform:rotate(360deg) } }
+    .loader-text { color:var(--text2); font-size:14px }
+    .loader-step { font-size:11px; color:var(--text3); margin-top:5px }
+
+    /* ── ERROR ────────────────────────────────────────────── */
+    #errorArea { display:none }
+    #errorArea.show { display:block }
+    .error-card { background:rgba(251,113,133,.06); border:1px solid rgba(251,113,133,.25); border-radius:var(--radius-lg); padding:20px; display:flex; align-items:flex-start; gap:14px; animation:rise .3s ease; backdrop-filter:blur(12px) }
+    .error-title { font-size:14px; font-weight:700; color:var(--error); margin-bottom:4px }
+    .error-msg { font-size:13px; color:var(--text2); line-height:1.6 }
+
+    /* ── RESULT ───────────────────────────────────────────── */
+    #resultArea { display:none }
+    #resultArea.show { display:block }
+    @keyframes rise { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .result-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; animation:rise .4s cubic-bezier(.16,1,.3,1); backdrop-filter:blur(24px); box-shadow:0 0 0 1px rgba(56,189,248,.3),0 0 40px rgba(56,189,248,.1) }
+    .result-top { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--border) }
+    .result-tag { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--text) }
+    .green-dot { width:8px; height:8px; border-radius:50%; background:var(--success); box-shadow:0 0 6px var(--success) }
+    .result-body { padding:18px }
+    .preview-wrap { border-radius:var(--radius); overflow:hidden; background:#000; margin-bottom:14px }
+    .preview-wrap video,.preview-wrap img { width:100%; max-height:400px; object-fit:contain; display:block }
+    .carousel { display:flex; gap:10px; overflow-x:auto; padding-bottom:8px; margin-bottom:14px; scrollbar-width:thin; scrollbar-color:var(--border) transparent }
+    .c-item { flex:0 0 150px; border-radius:var(--radius); overflow:hidden; border:1.5px solid var(--border); cursor:pointer; transition:border-color .2s; position:relative }
+    .c-item:hover { border-color:var(--accent) }
+    .c-item img,.c-item video { width:100%; height:110px; object-fit:cover; display:block }
+    .c-type { position:absolute; bottom:5px; left:5px; background:rgba(0,0,0,.7); color:#fff; font-size:9px; font-weight:700; padding:2px 6px; border-radius:4px }
+    .dl-row { display:flex; gap:10px; flex-wrap:wrap }
+    .btn-dl { flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:14px 20px; border-radius:var(--radius); font-family:'Outfit',sans-serif; font-size:14px; font-weight:800; border:none; cursor:pointer; transition:all .2s; text-decoration:none }
+    .btn-primary { background:linear-gradient(135deg,var(--accent),var(--teal))!important; color:#020510!important; box-shadow:0 4px 20px rgba(56,189,248,.3) }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(56,189,248,.45) }
+    .btn-all { background:linear-gradient(135deg,#6366f1,#8b5cf6)!important; color:#fff!important; box-shadow:0 4px 20px rgba(99,102,241,.3) }
+    .btn-all:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(99,102,241,.45) }
+
+    /* ── CHANNELS — favicon/brand icon style (like pair.html social icons) ── */
+    .channels { display:flex; gap:10px; overflow-x:auto; padding-bottom:6px }
+    .ch-card {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:10px;
+      color:var(--text);
+      padding:.5rem 1rem;
+      font-size:.78rem; font-weight:600;
+      text-decoration:none;
+      display:flex; align-items:center; gap:10px;
+      backdrop-filter:blur(10px);
+      cursor:pointer; transition:.2s;
+      white-space:nowrap; flex-shrink:0;
+    }
+    .ch-card:hover { background:rgba(56,189,248,.06); transform:translateY(-2px) }
+
+    /* The favicon-style icon badge — circle with brand color bg */
+    .ch-favicon {
+      width:34px; height:34px;
+      border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:16px; flex-shrink:0;
+      transition:.2s;
+    }
+    .ch-card:hover .ch-favicon { transform:scale(1.1) }
+
+    /* per-platform icon colors */
+    .ch-yt   { background:rgba(255,0,0,.15);    color:#ff4444;  border:1px solid rgba(255,0,0,.25) }
+    .ch-wa   { background:rgba(37,211,102,.12); color:#25d366;  border:1px solid rgba(37,211,102,.25) }
+    .ch-tg   { background:rgba(41,168,222,.12); color:#29a8de;  border:1px solid rgba(41,168,222,.25) }
+    .ch-tt   { background:rgba(254,44,85,.12);  color:#fe2c55;  border:1px solid rgba(254,44,85,.25) }
+
+    .ch-info { display:flex; flex-direction:column; line-height:1.25 }
+    .ch-name { font-size:12px; font-weight:700; color:var(--text) }
+    .ch-sub  { font-size:10px; color:var(--text3); font-weight:500 }
+    /* hover: name takes platform color */
+    .ch-card:hover .ch-yt  ~ .ch-info .ch-name,
+    .ch-card:hover .ch-yt   + .ch-info .ch-name { color:#ff4444 }
+    .ch-card:hover .ch-wa   + .ch-info .ch-name { color:#25d366 }
+    .ch-card:hover .ch-tg   + .ch-info .ch-name { color:#29a8de }
+    .ch-card:hover .ch-tt   + .ch-info .ch-name { color:#fe2c55 }
+
+    /* ── TOAST ────────────────────────────────────────────── */
+    #toast { position:fixed; top:-100px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--teal); backdrop-filter:blur(15px); padding:11px 22px; border-radius:50px; display:flex; align-items:center; gap:10px; z-index:1000; box-shadow:0 10px 40px rgba(0,0,0,.4); transition:.5s cubic-bezier(.175,.885,.32,1.275); white-space:nowrap }
+    #toast.show { top:20px }
+    #toastMsg { font-size:13px; font-weight:600; color:var(--text) }
+
+    /* ── STATUS BAR ───────────────────────────────────────── */
+    .status-bar { position:fixed; bottom:1rem; left:50%; transform:translateX(-50%); width:calc(100% - 2rem); max-width:600px; display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:700; color:var(--text3); z-index:50; background:var(--card); padding:8px 18px; border-radius:20px; border:1px solid var(--border); backdrop-filter:blur(16px) }
+    .sb-item { display:flex; align-items:center; gap:6px }
+
+    /* ── SEO ──────────────────────────────────────────────── */
+    .seo-wrap { background:var(--bg2); border-top:1px solid var(--border); padding:36px 20px }
+    .seo-inner { max-width:640px; margin:0 auto }
+    .seo-inner h2 { font-size:17px; font-weight:800; color:var(--text); margin-bottom:10px }
+    .seo-inner p { font-size:13px; color:var(--text2); line-height:1.8; margin-bottom:26px }
+    .feat-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:10px; backdrop-filter:blur(10px) }
+    .feat-card-title { font-size:13px; font-weight:700; color:var(--accent); margin-bottom:5px }
+    .feat-card-body { font-size:12px; color:var(--text2); line-height:1.7 }
+    .contact-link { display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--card); border:1px solid var(--border); border-radius:12px; text-decoration:none; margin-bottom:10px; backdrop-filter:blur(10px); transition:.2s }
+    .contact-link:hover { border-color:var(--accent) }
+
+    footer { border-top:1px solid var(--border); padding:22px 20px; text-align:center; color:var(--text3); font-size:12px; background:var(--card); backdrop-filter:blur(10px) }
+
+    @media(max-width:520px) {
+      .dl-row { flex-direction:column }
+      .features { gap:14px }
+      .channels { flex-wrap:nowrap }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+<canvas id="bgCanvas"></canvas>
+<div class="radial r1"></div>
+<div class="radial r2"></div>
+
+<!-- TOAST -->
+<div id="toast">
+  <i class="fas fa-check-circle" id="toastIcon" style="color:var(--success)"></i>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<div class="wrapper">
+
+  <!-- NAV -->
+  <nav>
+    <a class="logo" href="#">
+      <div class="logo-icon">⏏️</div>
+      Xhypher Tech<span>&nbsp;Downloader</span>
+    </a>
+    <div class="nav-right">
+      <div class="nav-tag">NO WATERMARK</div>
+      <button class="mode-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">
+        <i class="fas fa-moon"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="tiktok-badge">Media Downloader</div>
+    <h1>Xhypher Tech<br><span class="grad">Media Downloader</span></h1>
+    <p>Paste any media link and download instantly.<br>No watermark, no stress, completely free.</p>
+
+    <div class="input-block">
+      <div class="pair-input-row">
+        <div class="input-prefix"><i class="fas fa-link"></i></div>
+        <input id="urlInput" type="text" placeholder="Paste media link here..." autocomplete="off" autocorrect="off" spellcheck="false" />
+      </div>
+
+      <div id="platformBadge">
+        <span class="platform-label">Detected:</span>
+        <div class="platform-pill" id="platformPill">
+          <span id="platformIcon"></span>
+          <span id="platformName"></span>
+        </div>
+      </div>
+
+      <div class="quality-wrap">
+        <span class="quality-label">Quality:</span>
+        <div class="quality-btns">
+          <button class="q-btn" data-quality="360">360p</button>
+          <button class="q-btn" data-quality="480">480p</button>
+          <button class="q-btn active" data-quality="720">720p HD</button>
+          <button class="q-btn" data-quality="1080">1080p</button>
+        </div>
+      </div>
+
+      <button class="btn-download" id="fetchBtn">
+        <i class="fas fa-download"></i> Download
+      </button>
+    </div>
+
+    <div class="hint">Supports TikTok · Instagram · Facebook · YouTube · Twitter · Pinterest · Snapchat &amp; more</div>
+    <div class="features">
+      <div class="feat"><div class="feat-dot"></div> No Watermark</div>
+      <div class="feat"><div class="feat-dot"></div> HD Quality</div>
+      <div class="feat"><div class="feat-dot"></div> Slideshow Support</div>
+      <div class="feat"><div class="feat-dot"></div> 100% Free</div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="section" style="padding-top:0">
+    <div id="loader">
+      <div class="loader-card">
+        <div class="spinner"></div>
+        <div class="loader-text">Fetching your media...</div>
+        <div class="loader-step" id="loaderStep">Resolving link...</div>
+      </div>
+    </div>
+
+    <div id="errorArea">
+      <div class="error-card">
+        <div style="font-size:20px">⚠️</div>
+        <div>
+          <div class="error-title">Download Failed</div>
+          <div class="error-msg" id="errorMsg">Something went wrong.</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="resultArea">
+      <div class="result-card">
+        <div class="result-top">
+          <div class="result-tag"><div class="green-dot"></div>Media Ready</div>
+          <div style="font-size:11px;color:var(--text3)">no watermark</div>
+        </div>
+        <div class="result-body">
+          <div id="singlePreview" style="display:none">
+            <div class="preview-wrap" id="previewWrap"></div>
+            <div class="dl-row">
+              <button class="btn-dl btn-primary" id="dlBtn">
+                <i class="fas fa-download"></i> Download Video
+              </button>
+            </div>
+          </div>
+          <div id="multiPreview" style="display:none">
+            <div class="carousel" id="carousel"></div>
+            <div class="dl-row">
+              <button class="btn-dl btn-all" id="dlAllBtn">
+                <i class="fas fa-download"></i> Download All (<span id="mediaCount">0</span>)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CHANNELS — favicon/brand icon style -->
+  <div class="section">
+    <div style="font-size:15px;font-weight:800;margin-bottom:14px;color:var(--text)">Xhypher Tech</div>
+    <div class="channels">
+
+      <a class="ch-card" href="https://youtube.com/@xhyphertech" target="_blank" rel="noopener">
+        <div class="ch-favicon ch-yt"><i class="fab fa-youtube"></i></div>
+        <div class="ch-info">
+          <span class="ch-name">YouTube</span>
+          <span class="ch-sub">@xhyphertech</span>
+        </div>
+      </a>
+
+      <a class="ch-card" href="https://whatsapp.com/channel/0029Vb0Gf5cDzgT3OIIc4C0b" target="_blank" rel="noopener">
+        <div class="ch-favicon ch-wa"><i class="fab fa-whatsapp"></i></div>
+        <div class="ch-info">
+          <span class="ch-name">WhatsApp</span>
+          <span class="ch-sub">Xhypher Tech</span>
+        </div>
+      </a>
+
+      <a class="ch-card" href="https://t.me/xhyphertech" target="_blank" rel="noopener">
+        <div class="ch-favicon ch-tg"><i class="fab fa-telegram"></i></div>
+        <div class="ch-info">
+          <span class="ch-name">Telegram</span>
+          <span class="ch-sub">@xhyphertech</span>
+        </div>
+      </a>
+
+      <a class="ch-card" href="https://tiktok.com/@xhyphertech" target="_blank" rel="noopener">
+        <div class="ch-favicon ch-tt"><i class="fab fa-tiktok"></i></div>
+        <div class="ch-info">
+          <span class="ch-name">TikTok</span>
+          <span class="ch-sub">@xhyphertech</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- SEO -->
+  <div class="seo-wrap">
+    <div class="seo-inner">
+
+      <h2>What is Xhypher Tech Media Downloader?</h2>
+      <p>Xhypher Tech | Media Downloader is a specialized utility tool developed by <strong style="color:var(--accent)">Famous Tech</strong> from the Xhypher Tech team. Download media content from TikTok, Instagram, Facebook, YouTube, Twitter and more <strong style="color:var(--accent)">without watermark</strong>, in HD quality, instantly.</p>
+
+      <h2>Who is Xhypher Tech?</h2>
+      <p><strong style="color:var(--text)">Xhypher Tech</strong> is a modern software development brand led by Zimtk (Owner), focused on high-performance utility tools, privacy-focused networking solutions, and automation bots.</p>
+
+      <h2>✨ Core Features</h2>
+      <div class="feat-card"><div class="feat-card-title">📱 Multi-Platform Support</div><div class="feat-card-body">Download videos, images, and audio from Facebook, Instagram, TikTok, Twitter, YouTube, Pinterest, Snapchat, CapCut and more.</div></div>
+      <div class="feat-card"><div class="feat-card-title">🌐 Smart Platform Detection</div><div class="feat-card-body">Automatically detects which social media platform your link is from and optimizes the download accordingly.</div></div>
+      <div class="feat-card"><div class="feat-card-title">🏎️ High-Speed Downloads</div><div class="feat-card-body">Optimized for fast file retrieval, supporting multiple simultaneous downloads and background processing.</div></div>
+      <div class="feat-card"><div class="feat-card-title">🎞️ Format Flexibility</div><div class="feat-card-body">Supports various resolutions (360p to 1080p) and formats including MP4, MP3, JPG, and PNG.</div></div>
+      <div class="feat-card" style="margin-bottom:28px"><div class="feat-card-title">🎯 Simple Interface</div><div class="feat-card-body">One-click user experience, avoiding complex configurations. ✅</div></div>
+
+      <h2>❓ Frequently Asked Questions</h2>
+      <div class="feat-card"><div class="feat-card-title">How do I download without watermark?</div><div class="feat-card-body">Paste any media link in the box above and click Download. It extracts the clean watermark-free version automatically.</div></div>
+      <div class="feat-card"><div class="feat-card-title">Which platforms are supported?</div><div class="feat-card-body">TikTok, Instagram, Facebook, YouTube, Twitter/X, Pinterest, Snapchat, CapCut, Douyin, Threads and more.</div></div>
+      <div class="feat-card"><div class="feat-card-title">Can I download slideshows?</div><div class="feat-card-body">Yes! Supports slideshows and photo posts. Download all slides at once with the Download All button.</div></div>
+      <div class="feat-card" style="margin-bottom:28px"><div class="feat-card-title">Is this tool free?</div><div class="feat-card-body">100% free. No signup, no payment, no limit. Built and maintained by Famous Tech | Xhypher Tech.</div></div>
+
+      <h2>📡 Connect with Xhypher Team</h2>
+      <a href="mailto:support@xhyphertech.com" class="contact-link">
+        <span style="font-size:20px">📩</span>
+        <div><div style="font-size:13px;font-weight:700;color:var(--accent)">Xhypher Tech Team</div><div style="font-size:11px;color:var(--text3)">Contact Us</div></div>
+      </a>
+      <a href="https://youtube.com/@xhyphertech" target="_blank" rel="noopener" class="contact-link">
+        <i class="fab fa-youtube" style="font-size:20px;color:#ff4444;width:24px;text-align:center"></i>
+        <div><div style="font-size:13px;font-weight:700;color:#ff4444">YouTube</div><div style="font-size:11px;color:var(--text3)">@xhyphertech</div></div>
+      </a>
+      <a href="https://whatsapp.com/channel/0029Vb0Gf5cDzgT3OIIc4C0b" target="_blank" rel="noopener" class="contact-link">
+        <i class="fab fa-whatsapp" style="font-size:20px;color:#25d366;width:24px;text-align:center"></i>
+        <div><div style="font-size:13px;font-weight:700;color:#25d366">WhatsApp Channel</div><div style="font-size:11px;color:var(--text3)">Xhypher Tech</div></div>
+      </a>
+      <a href="https://t.me/xhyphertech" target="_blank" rel="noopener" class="contact-link">
+        <i class="fab fa-telegram" style="font-size:20px;color:#29a8de;width:24px;text-align:center"></i>
+        <div><div style="font-size:13px;font-weight:700;color:#29a8de">Telegram Channel</div><div style="font-size:11px;color:var(--text3)">@xhyphertech</div></div>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <p style="color:var(--text2)">Built by <strong style="color:var(--accent)">Famous Tech</strong></p>
+    <p style="margin-top:5px;color:var(--text3);font-size:11px">© 2026 Xhypher Tech. All rights reserved.</p>
+    <p style="margin-top:3px;color:var(--text3);font-size:11px">Download responsibly. Respect content creators.</p>
+    <p style="margin-top:3px;color:var(--text2)">Powered by <strong style="color:var(--accent)">Xhypher Tech</strong></p>
+  </footer>
+
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="sb-item" id="clock"><i class="far fa-clock"></i><span>--:--:--</span></div>
+  <div class="sb-item" id="battery"><i class="fas fa-bolt"></i><span>Battery: --%</span></div>
+</div>
+
+<script>
+/* ── CANVAS STARFIELD ─────────────────────────────────────── */
+(function(){
+  const cv=document.getElementById('bgCanvas'),ctx=cv.getContext('2d');
+  let W,H,stars=[];
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight}
+  function mkStars(){stars=[];for(let i=0;i<130;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+.3,a:Math.random(),da:(Math.random()-.5)*.005})}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const light=document.body.getAttribute('data-theme')==='light';
+    stars.forEach(s=>{
+      s.a=Math.max(.05,Math.min(1,s.a+s.da));
+      if(s.a<=.05||s.a>=1)s.da*=-1;
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=light?`rgba(14,165,233,${s.a*.25})`:`rgba(56,189,248,${s.a*.55})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  resize();mkStars();draw();
+  window.addEventListener('resize',()=>{resize();mkStars();});
+})();
+
+/* ── THEME TOGGLE ─────────────────────────────────────────── */
+function toggleTheme(){
+  const b=document.body,isDark=b.getAttribute('data-theme')==='dark';
+  document.getElementById('themeBtn').innerHTML=isDark?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';
+  b.setAttribute('data-theme',isDark?'light':'dark');
+}
+
+/* ── CLOCK ────────────────────────────────────────────────── */
+function startClock(){
+  function tick(){const el=document.getElementById('clock');if(el)el.innerHTML=`<i class="far fa-clock"></i><span>${new Date().toLocaleTimeString()}</span>`;}
+  tick();setInterval(tick,1000);
+}
+
+/* ── BATTERY ──────────────────────────────────────────────── */
+function updateBattery(){
+  const el=document.getElementById('battery');
+  if(navigator.getBattery){
+    navigator.getBattery().then(bat=>{
+      const upd=()=>{
+        const lvl=Math.floor(bat.level*100);
+        const ic=bat.charging?'fa-charging-station':'fa-bolt';
+        el.innerHTML=`<i class="fas ${ic}"></i><span>${lvl}%</span>`;
+        el.style.color=lvl>20?'var(--success)':'var(--error)';
+      };
+      upd();bat.onlevelchange=upd;bat.onchargingchange=upd;
+    });
+  } else {
+    el.innerHTML=`<i class="fas fa-wifi"></i><span>Online</span>`;
+  }
+}
+
+/* ── QUALITY ──────────────────────────────────────────────── */
+let selectedQuality='720';
+document.querySelectorAll('.q-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.q-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedQuality=btn.dataset.quality;
+  });
+});
+
+/* ── PLATFORM DETECTION ───────────────────────────────────── */
+const PLATFORMS=[
+  {pattern:/tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com/i, name:'TikTok',      icon:'🎵', color:'#fe2c55',bg:'rgba(254,44,85,.10)',  border:'rgba(254,44,85,.5)'},
+  {pattern:/instagram\.com/i,                               name:'Instagram',   icon:'📸', color:'#e1306c',bg:'rgba(225,48,108,.10)', border:'rgba(225,48,108,.5)'},
+  {pattern:/facebook\.com|fb\.watch/i,                      name:'Facebook',    icon:'👥', color:'#1877f2',bg:'rgba(24,119,242,.10)', border:'rgba(24,119,242,.5)'},
+  {pattern:/twitter\.com|x\.com/i,                          name:'X / Twitter', icon:'🐦', color:'#1d9bf0',bg:'rgba(29,155,240,.10)',border:'rgba(29,155,240,.5)'},
+  {pattern:/youtube\.com|youtu\.be/i,                       name:'YouTube',     icon:'📺', color:'#ff0000',bg:'rgba(255,0,0,.10)',   border:'rgba(255,0,0,.5)'},
+  {pattern:/snapchat\.com/i,                                name:'Snapchat',    icon:'👻', color:'#fffc00',bg:'rgba(255,252,0,.08)', border:'rgba(255,252,0,.5)'},
+  {pattern:/pinterest\.com/i,                               name:'Pinterest',   icon:'📌', color:'#e60023',bg:'rgba(230,0,35,.10)',  border:'rgba(230,0,35,.5)'},
+  {pattern:/threads\.net/i,                                 name:'Threads',     icon:'🧵', color:'#94a3b8',bg:'rgba(148,163,184,.08)',border:'rgba(148,163,184,.4)'},
+  {pattern:/capcut\.com/i,                                  name:'CapCut',      icon:'✂️', color:'#38bdf8',bg:'rgba(56,189,248,.08)',border:'rgba(56,189,248,.4)'},
+  {pattern:/douyin\.com/i,                                  name:'Douyin',      icon:'🎵', color:'#fe2c55',bg:'rgba(254,44,85,.10)',  border:'rgba(254,44,85,.5)'},
+  {pattern:/vimeo\.com/i,                                   name:'Vimeo',       icon:'🎬', color:'#1ab7ea',bg:'rgba(26,183,234,.10)',border:'rgba(26,183,234,.5)'},
+  {pattern:/dailymotion\.com/i,                             name:'Dailymotion', icon:'📹', color:'#003087',bg:'rgba(0,48,135,.10)',  border:'rgba(0,48,135,.5)'},
+  {pattern:/reddit\.com/i,                                  name:'Reddit',      icon:'🤖', color:'#ff4500',bg:'rgba(255,69,0,.10)',  border:'rgba(255,69,0,.5)'},
+  {pattern:/linkedin\.com/i,                                name:'LinkedIn',    icon:'💼', color:'#0077b5',bg:'rgba(0,119,181,.10)', border:'rgba(0,119,181,.5)'},
+];
+
+function detectPlatform(url){
+  if(!url){document.getElementById('platformBadge').classList.remove('show');return}
+  const m=PLATFORMS.find(p=>p.pattern.test(url));
+  const badge=document.getElementById('platformBadge');
+  if(m){
+    document.getElementById('platformIcon').textContent=m.icon;
+    document.getElementById('platformName').textContent=m.name;
+    const pill=document.getElementById('platformPill');
+    pill.style.color=m.color;pill.style.background=m.bg;pill.style.borderColor=m.border;
+    badge.classList.add('show');
+  } else {badge.classList.remove('show')}
+}
+const urlInput=document.getElementById('urlInput');
+urlInput.addEventListener('input',()=>detectPlatform(urlInput.value.trim()));
+urlInput.addEventListener('paste',()=>setTimeout(()=>detectPlatform(urlInput.value.trim()),50));
+
+/* ── TOAST ────────────────────────────────────────────────── */
+let toastT;
+function showToast(msg,isErr){
+  clearTimeout(toastT);
+  const icon=document.getElementById('toastIcon');
+  icon.className=isErr?'fas fa-times-circle':'fas fa-check-circle';
+  icon.style.color=isErr?'var(--error)':'var(--success)';
+  document.getElementById('toastMsg').textContent=msg;
+  const el=document.getElementById('toast');el.classList.add('show');
+  toastT=setTimeout(()=>el.classList.remove('show'),3200);
+}
+
+/* ── PROXIES & API ────────────────────────────────────────── */
+const PROXIES=[
+  u=>'https://corsproxy.io/?'+encodeURIComponent(u),
+  u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),
+  u=>'https://proxy.cors.sh/'+u,
+];
+
+async function fetchViaCobalt(url){
+  const instances=['https://api.cobalt.tools','https://co.wuk.sh'];
+  for(const base of instances){
+    try{
+      const res=await fetch(base+'/api/json',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({url,vCodec:'h264',vQuality:selectedQuality,aFormat:'mp3',filenamePattern:'classic',isAudioOnly:false,tiktokH265:false}),signal:AbortSignal.timeout(15000)});
+      const data=await res.json();
+      if(['stream','redirect','tunnel'].includes(data.status)&&data.url)return{type:'video',url:data.url,filename:data.filename||'media_video'};
+      if(data.status==='picker'&&data.picker&&data.picker.length)return{type:'multiple',items:data.picker};
+    }catch(e){}
+  }
+  for(const proxy of PROXIES){
+    try{
+      const res=await fetch(proxy('https://api.cobalt.tools/api/json'),{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({url,vCodec:'h264',vQuality:selectedQuality,aFormat:'mp3',filenamePattern:'classic',isAudioOnly:false,tiktokH265:false}),signal:AbortSignal.timeout(15000)});
+      const data=await res.json();
+      if(['stream','redirect','tunnel'].includes(data.status)&&data.url)return{type:'video',url:data.url,filename:data.filename||'media_video'};
+      if(data.status==='picker'&&data.picker&&data.picker.length)return{type:'multiple',items:data.picker};
+    }catch(e){}
+  }
+  return null;
+}
+
+async function fetchViaPrince(url){
+  const apis=[
+    'https://api.princetechn.com/api/download/tiktok?apikey=prince&url='+encodeURIComponent(url),
+    'https://api.princetechn.com/api/download/tiktokdlv2?apikey=prince_tech_api_azfsbshfb&url='+encodeURIComponent(url),
+    'https://api.princetechn.com/api/download/tiktokdlv3?apikey=prince_tech_api_azfsbshfb&url='+encodeURIComponent(url),
+    'https://api.princetechn.com/api/download/tiktokdlv4?apikey=prince_tech_api_azfsbshfb&url='+encodeURIComponent(url),
+    'https://api.dreaded.site/api/tiktok?url='+encodeURIComponent(url),
+    'https://api.princetechn.com/api/download/aiodl?apikey=prince&url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/aio?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/capcut?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/doods?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/douyin?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/facebook?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/facebookv2?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/ig2?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/instagram?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/threads?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/threadsV2?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/tiktok?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/tiktokV2?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/tiktokV3?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/tiktokvideo?url='+encodeURIComponent(url),
+    'https://apis.prexzyvilla.site/download/twitter?url='+encodeURIComponent(url),
+    'https://api.princetechn.com/api/download/ytv?apikey=prince&url='+encodeURIComponent(url),
+    'https://api.princetechn.com/api/download/yta?apikey=prince&url='+encodeURIComponent(url),
+    'https://api.princetechn.com/api/download/mp4?apikey=prince&url='+encodeURIComponent(url),
+  ];
+  for(const apiUrl of apis){
+    try{
+      const res=await fetch(apiUrl,{signal:AbortSignal.timeout(12000)});
+      const data=await res.json();
+      let videoUrl=null;
+      if(data.result&&data.result.videoUrl)videoUrl=data.result.videoUrl;
+      else if(data.media&&data.media.video)videoUrl=data.media.video;
+      else if(data.video)videoUrl=data.video;
+      if(videoUrl)return{type:'video',url:videoUrl,filename:'media_video'};
+    }catch(e){}
+  }
+  return null;
+}
+
+async function fetchMedia(url){
+  let r=await fetchViaCobalt(url);
+  if(!r)r=await fetchViaPrince(url);
+  return r;
+}
+
+function hideAll(){
+  document.getElementById('loader').classList.remove('show');
+  document.getElementById('errorArea').classList.remove('show');
+  document.getElementById('resultArea').classList.remove('show');
+}
+
+async function fetchWithProxy(href){
+  try{const r=await fetch(href,{mode:'cors'});if(r.ok)return r;}catch(e){}
+  for(const proxy of PROXIES){try{const r=await fetch(proxy(href));if(r.ok)return r;}catch(e){}}
+  return null;
+}
+
+async function triggerDownload(href,name){
+  showToast('Preparing download...');
+  try{
+    const res=await fetchWithProxy(href);
+    if(res){
+      const blob=await res.blob(),blobUrl=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=blobUrl;a.download=name||'media_download';
+      document.body.appendChild(a);a.click();document.body.removeChild(a);
+      setTimeout(()=>URL.revokeObjectURL(blobUrl),8000);
+      showToast('Downloaded! ✅');
+    }else{window.open(href,'_blank');showToast('Opened in new tab — long press to save');}
+  }catch(e){window.open(href,'_blank');showToast('Opened in new tab — long press to save');}
+}
+
+/* ── STEPS ────────────────────────────────────────────────── */
+const STEPS=['Resolving link...','Connecting to server...','Extracting media...','Almost done...'];
+let stepInt;
+function startSteps(){
+  let i=0;const el=document.getElementById('loaderStep');el.textContent=STEPS[0];
+  stepInt=setInterval(()=>{i=Math.min(i+1,STEPS.length-1);el.textContent=STEPS[i];},2200);
+}
+function stopSteps(){clearInterval(stepInt);}
+
+/* ── MAIN FETCH — accepts ALL social media links ──────────── */
+urlInput.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('fetchBtn').click();});
+
+document.getElementById('fetchBtn').addEventListener('click',async()=>{
+  let raw=urlInput.value.trim();
+  if(!raw){showToast('Paste a media link first',true);urlInput.focus();return;}
+  if(!raw.startsWith('http'))raw='https://'+raw;
+
+  // Validate it looks like a URL at all
+  try{ new URL(raw); }catch(e){
+    hideAll();
+    document.getElementById('errorMsg').textContent='That doesn\'t look like a valid URL. Please paste a full link including https://';
+    document.getElementById('errorArea').classList.add('show');
+    return;
+  }
+
+  document.getElementById('fetchBtn').disabled=true;
+  hideAll();
+  document.getElementById('loader').classList.add('show');
+  startSteps();
+
+  try{
+    const result=await fetchMedia(raw);
+    stopSteps();
+
+    if(!result){
+      hideAll();
+      document.getElementById('errorMsg').textContent='Could not extract media. The link may be private, expired, or from an unsupported platform.';
+      document.getElementById('errorArea').classList.add('show');
+      document.getElementById('fetchBtn').disabled=false;
+      return;
+    }
+
+    if(result.type==='video'){
+      const pw=document.getElementById('previewWrap');pw.innerHTML='';
+      const v=document.createElement('video');v.src=result.url;v.controls=true;v.playsInline=true;
+      v.style.cssText='width:100%;max-height:400px;object-fit:contain;display:block;';
+      pw.appendChild(v);
+      document.getElementById('dlBtn').onclick=()=>triggerDownload(result.url,result.filename||'media_video');
+      document.getElementById('singlePreview').style.display='block';
+      document.getElementById('multiPreview').style.display='none';
+      hideAll();document.getElementById('resultArea').classList.add('show');
+      document.getElementById('resultArea').scrollIntoView({behavior:'smooth',block:'nearest'});
+      return;
+    }
+
+    if(result.type==='multiple'&&result.items&&result.items.length){
+      const carousel=document.getElementById('carousel');carousel.innerHTML='';
+      result.items.forEach((item,i)=>{
+        const div=document.createElement('div');div.className='c-item';
+        const isImg=item.type==='photo'||item.type==='image';
+        if(isImg){const img=document.createElement('img');img.src=item.thumb||item.url;img.alt='Slide '+(i+1);div.appendChild(img);}
+        else{const vid=document.createElement('video');vid.src=item.url;vid.muted=true;vid.playsInline=true;div.appendChild(vid);}
+        const badge=document.createElement('div');badge.className='c-type';badge.textContent=isImg?'IMG':'VID';div.appendChild(badge);
+        div.onclick=()=>triggerDownload(item.url,item.filename||('slide_'+(i+1)));
+        carousel.appendChild(div);
+      });
+      document.getElementById('mediaCount').textContent=result.items.length;
+      document.getElementById('dlAllBtn').onclick=()=>{
+        result.items.forEach((item,i)=>setTimeout(()=>triggerDownload(item.url,item.filename||('slide_'+(i+1))),i*800));
+      };
+      document.getElementById('singlePreview').style.display='none';
+      document.getElementById('multiPreview').style.display='block';
+      hideAll();document.getElementById('resultArea').classList.add('show');
+      document.getElementById('resultArea').scrollIntoView({behavior:'smooth',block:'nearest'});
+      return;
+    }
+
+    hideAll();
+    document.getElementById('errorMsg').textContent='Could not extract media. The link may be private or expired.';
+    document.getElementById('errorArea').classList.add('show');
+
+  }catch(e){
+    stopSteps();hideAll();
+    document.getElementById('errorMsg').textContent='Request failed: '+e.message+'. Please try again.';
+    document.getElementById('errorArea').classList.add('show');
+  }finally{
+    document.getElementById('fetchBtn').disabled=false;
+  }
+});
+
+/* ── INIT ─────────────────────────────────────────────────── */
+window.onload=()=>{ startClock(); updateBattery(); };
+</script>
+</body>
+</html>
