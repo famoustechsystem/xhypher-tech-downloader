@@ -662,7 +662,7 @@ async function triggerDownload(href,name){
 }
 
 /* ── STEPS ────────────────────────────────────────────────── */
-const STEPS=['Resolving link...','Connecting to server...','Extracting media...','Uploading','Almost done...'];
+const STEPS=['Resolving link...','Connecting to server...','Extracting media...','Uploading...'];
 let stepInt;
 function startSteps(){
   let i=0;const el=document.getElementById('loaderStep');el.textContent=STEPS[0];
